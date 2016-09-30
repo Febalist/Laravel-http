@@ -54,16 +54,18 @@ class Http
             if ($options['use_interfaces']) {
                 $interfaces = config('services.http.interfaces');
                 $interfaces = explode(',', $interfaces);
-                $key        = 'http.last.interface.'.get_class($this);
-                $index      = Cache::get($key, -1) + 1;
-                if ($index > count($interfaces)) {
-                    $index = 0;
+                if ($interfaces) {
+                    $key   = 'http.last.interface.'.get_class($this);
+                    $index = Cache::get($key, -1) + 1;
+                    if ($index > count($interfaces)) {
+                        $index = 0;
+                    }
+                    Cache::put($key, $index);
+                    $rate_key        = $index;
+                    $options['curl'] = [
+                        CURLOPT_INTERFACE => $interfaces[$index],
+                    ];
                 }
-                Cache::put($key, $index);
-                $rate_key        = $index;
-                $options['curl'] = [
-                    CURLOPT_INTERFACE => $interfaces[$index],
-                ];
             }
             $this->rate($options['rate_limit'], $rate_key);
 
