@@ -1,0 +1,15 @@
+{
+  "name": "febalist/laravel-http",
+  "autoload": {
+    "psr-4": {
+      "Febalist\\LaravelHttp\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "require": {
+	"laravel/framework": "5.2.*|5.3.*",
+    "guzzlehttp/guzzle": "6.*"
+  }
+}
