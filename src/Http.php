@@ -3,6 +3,7 @@ namespace Febalist\LaravelHttp;
 
 use Cache;
 use Exception;
+use GuzzleHttp\Client;
 use Log;
 
 class Http

@@ -8,15 +8,15 @@ if (!function_exists('http')) {
 }
 
 if (!function_exists('http_get')) {
-    function http_get($url, $params = [], $headers = [], $options = [])
+    function http_get($uri, $params = [], $headers = [], $options = [])
     {
-        return http()->get($url, $params, $headers, $options);
+        return http()->get($uri, $params, $headers, $options);
     }
 }
 
 if (!function_exists('http_post')) {
-    function http_post($url, $params = [], $headers = [], $options = [])
+    function http_post($uri, $params = [], $headers = [], $options = [])
     {
-        return http()->post($url, $params, $headers, $options);
+        return http()->post($uri, $params, $headers, $options);
     }
 }
