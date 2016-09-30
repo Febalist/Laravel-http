@@ -37,8 +37,8 @@ class Http
     {
         $option_body = strtoupper($method) == 'POST' ? 'form_params' : 'query';
         $options     = array_merge($this->options, $options, [
-            'headers' => $headers,
-            $body     => $params,
+            'headers'    => $headers,
+            $option_body => $params,
         ]);
 
         Log::debug("HTTP $method $uri", compact('headers', 'params'));
@@ -46,14 +46,14 @@ class Http
         $error = null;
         for ($attempt = 1; $attempt <= $options['retry_attempts'] + 1; $attempt++) {
             if ($attempt > 1) {
-                Log::warning("HTTP retry $method $url");
+                Log::warning("HTTP retry $method $uri");
                 $this->delay($options['retry_delay']);
             }
-            $this->rate_delay($options['rate_limit']);
+            $this->rate($options['rate_limit']);
 
             $time = microtime(true);
             try {
-                $response = $this->client->request($method, $url, $options);
+                $response = $this->client->request($method, $uri, $options);
             } catch (ConnectException $e) {
                 $response = null;
                 $error    = $e->getMessage();
