@@ -15,6 +15,7 @@ class Http
         'rate_limit'     => 0,
         'retry_delay'    => 0,
         'retry_attempts' => 0,
+        'use_interfaces' => false,
     ];
 
     public function __construct($options = [])
@@ -43,13 +44,28 @@ class Http
 
         Log::debug("HTTP $method $uri", compact('headers', 'params'));
 
-        $error = null;
+        $rate_key = null;
+        $error    = null;
         for ($attempt = 1; $attempt <= $options['retry_attempts'] + 1; $attempt++) {
             if ($attempt > 1) {
                 Log::warning("HTTP retry $method $uri");
                 $this->delay($options['retry_delay']);
             }
-            $this->rate($options['rate_limit']);
+            if ($options['use_interfaces']) {
+                $interfaces = config('services.http.interfaces');
+                $interfaces = explode(',', $interfaces);
+                $key        = 'http.last.interface.'.get_class($this);
+                $index      = Cache::get($key, -1) + 1;
+                if ($index > count($interfaces)) {
+                    $index = 0;
+                }
+                Cache::put($key, $index);
+                $rate_key        = $index;
+                $options['curl'] = [
+                    CURLOPT_INTERFACE => $interfaces[$index],
+                ];
+            }
+            $this->rate($options['rate_limit'], $rate_key);
 
             $time = microtime(true);
             try {
@@ -100,7 +116,7 @@ class Http
     {
         if ($limit > 0) {
             $class    = get_class($this);
-            $key      = "api.last.$class.$key";
+            $key      = "http.last.time.$class.$key";
             $interval = 1 / $limit + 0.001;
             $now      = microtime(true);
             $last     = Cache::get($key, 0);
