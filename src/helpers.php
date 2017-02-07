@@ -20,3 +20,10 @@ if (!function_exists('http_post')) {
         return http()->post($uri, $params, $headers, $options);
     }
 }
+
+if (!function_exists('http_code_message')) {
+    function http_code_message($code = 200)
+    {
+        return array_get(Febalist\LaravelHttp\Http::CODE_MESSAGES, $code);
+    }
+}
