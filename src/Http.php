@@ -68,10 +68,10 @@ class Http
     ];
     protected $client;
     protected $options = [
-        'exceptions' => false,
-        'timeout' => 0,
-        'rate_limit' => 0,
-        'retry_delay' => 0,
+        'exceptions'     => false,
+        'timeout'        => 0,
+        'rate_limit'     => 0,
+        'retry_delay'    => 0,
         'retry_attempts' => 0,
         'use_interfaces' => false,
     ];
@@ -91,7 +91,7 @@ class Http
     {
         $option_body = strtoupper($method) == 'POST' ? 'form_params' : 'query';
         $options = array_merge($this->options, $options, [
-            'headers' => $headers,
+            'headers'    => $headers,
             $option_body => $params,
         ]);
 
