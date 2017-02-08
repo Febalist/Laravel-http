@@ -99,7 +99,7 @@ class Http
         return $this->load($uri, $params, 'POST', $options);
     }
 
-    public function load($uri, $method = 'GET', $params = [], $options = [])
+    public function load($uri, $params = [], $method = 'GET', $options = [])
     {
         $params_type = strtoupper($method) == 'POST' ? 'form_params' : 'query';
         $response = $this->request($uri, $method, array_merge($this->options, $options, [
