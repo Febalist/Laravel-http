@@ -136,9 +136,9 @@ class Http
             $exception = $e;
         }
 
-        $status = $response->getStatusCode();
+        $status = $response ? $response->getStatusCode() : 0;
 
-        if ($exception instanceof ClientException && $status != 429) {
+        if ($response && $exception instanceof ClientException && $status != 429) {
             $exception = null;
         }
 
