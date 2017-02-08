@@ -3,13 +3,15 @@
 namespace Febalist\LaravelHttp;
 
 use Cache;
+use ErrorException;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use Log;
 
 class Http
 {
-    const CODE_MESSAGES = [
+    const CODES = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -48,7 +50,7 @@ class Http
         416 => 'Requested Range Not Satisfiable',
         417 => 'Expectation Failed',
         418 => 'I\'m a teapot',
-        422 => 'Unprocessable Entity',
+        422 => 'Unprocessa ble Entity',
         423 => 'Locked',
         424 => 'Failed Dependency',
         425 => 'Unordered Collection',
@@ -68,23 +70,34 @@ class Http
     ];
     protected $client;
     protected $options = [
-        'exceptions'     => false,
+
         'timeout'        => 0,
         'rate_limit'     => 0,
         'retry_delay'    => 0,
         'retry_attempts' => 0,
-        'use_interfaces' => false,
     ];
 
     public function __construct($options = [])
     {
         $this->options = array_merge($this->options, $options);
-        $this->client = new Client();
+        $this->client = new Client([
+            'exceptions' => false,
+        ]);
     }
 
-    public function get($uri, $params = [], $headers = [], $options = [])
+    public static function code_message($code)
     {
-        return $this->request($uri, $params, 'GET', $headers, $options);
+        return array_get(static::CODES, $code);
+    }
+
+    public function get($uri, $params = [], $options = [])
+    {
+        return $this->request($uri, $params, 'GET', $options);
+    }
+
+    public function post($uri, $params = [], $options = [])
+    {
+        return $this->request($uri, $params, 'POST', $options);
     }
 
     public function request($uri, $params = [], $method = 'GET', $headers = [], $options = [])
@@ -103,22 +116,6 @@ class Http
             if ($attempt > 1) {
                 Log::warning("HTTP retry $method $uri");
                 $this->delay($options['retry_delay']);
-            }
-            if ($options['use_interfaces']) {
-                $interfaces = config('services.http.interfaces');
-                $interfaces = explode(',', $interfaces);
-                if ($interfaces) {
-                    $key = 'http.last.interface.'.get_class($this);
-                    $index = Cache::get($key, -1) + 1;
-                    if ($index > count($interfaces)) {
-                        $index = 0;
-                    }
-                    Cache::put($key, $index);
-                    $rate_key = $index;
-                    $options['curl'] = [
-                        CURLOPT_INTERFACE => $interfaces[$index],
-                    ];
-                }
             }
             $this->rate($options['rate_limit'], $rate_key);
 
@@ -186,8 +183,4 @@ class Http
         }
     }
 
-    public function post($uri, $params = [], $headers = [], $options = [])
-    {
-        return $this->request($uri, $params, 'POST', $headers, $options);
-    }
 }

@@ -8,22 +8,22 @@ if (!function_exists('http')) {
 }
 
 if (!function_exists('http_get')) {
-    function http_get($uri, $params = [], $headers = [], $options = [])
+    function http_get($uri, $params = [], $options = [])
     {
-        return http()->get($uri, $params, $headers, $options);
+        return http()->get($uri, $params, $options);
     }
 }
 
 if (!function_exists('http_post')) {
-    function http_post($uri, $params = [], $headers = [], $options = [])
+    function http_post($uri, $params = [], $options = [])
     {
-        return http()->post($uri, $params, $headers, $options);
+        return http()->post($uri, $params, $options);
     }
 }
 
 if (!function_exists('http_code_message')) {
-    function http_code_message($code = 200)
+    function http_code_message($code)
     {
-        return array_get(Febalist\LaravelHttp\Http::CODE_MESSAGES, $code);
+        return \Febalist\LaravelHttp\Http::code_message($code);
     }
 }
