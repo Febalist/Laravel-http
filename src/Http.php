@@ -2,12 +2,11 @@
 
 namespace Febalist\LaravelHttp;
 
-use Cache;
-use ErrorException;
-use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
-use Log;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
 
 class Http
 {
@@ -55,6 +54,7 @@ class Http
         424 => 'Failed Dependency',
         425 => 'Unordered Collection',
         426 => 'Upgrade Required',
+        429 => 'Too Many Requests',
         449 => 'Retry With',
         450 => 'Blocked by Windows Parental Controls',
         500 => 'Internal Server Error',
@@ -70,117 +70,88 @@ class Http
     ];
     protected $client;
     protected $options = [
-
-        'timeout'        => 0,
-        'rate_limit'     => 0,
-        'retry_delay'    => 0,
-        'retry_attempts' => 0,
+        'timeout'     => 0,
+        'rate_limit'  => 0,
+        'rate_key'    => null,
+        'retry_times' => 1,
+        'retry_sleep' => 0,
+        'allow_empty' => false,
     ];
 
     public function __construct($options = [])
     {
         $this->options = array_merge($this->options, $options);
-        $this->client = new Client([
-            'exceptions' => false,
-        ]);
+        $this->client = new Client();
     }
 
-    public static function code_message($code)
+    public function code_message($code)
     {
         return array_get(static::CODES, $code);
     }
 
     public function get($uri, $params = [], $options = [])
     {
-        return $this->request($uri, $params, 'GET', $options);
+        return $this->load($uri, $params, 'GET', $options);
     }
 
     public function post($uri, $params = [], $options = [])
     {
-        return $this->request($uri, $params, 'POST', $options);
+        return $this->load($uri, $params, 'POST', $options);
     }
 
-    public function request($uri, $params = [], $method = 'GET', $headers = [], $options = [])
+    public function load($uri, $method = 'GET', $params = [], $options = [])
     {
-        $option_body = strtoupper($method) == 'POST' ? 'form_params' : 'query';
-        $options = array_merge($this->options, $options, [
-            'headers'    => $headers,
-            $option_body => $params,
-        ]);
-
-        Log::debug("HTTP $method $uri", compact('headers', 'params'));
-
-        $rate_key = null;
-        $error = null;
-        for ($attempt = 1; $attempt <= $options['retry_attempts'] + 1; $attempt++) {
-            if ($attempt > 1) {
-                Log::warning("HTTP retry $method $uri");
-                $this->delay($options['retry_delay']);
-            }
-            $this->rate($options['rate_limit'], $rate_key);
-
-            $time = microtime(true);
-            try {
-                $response = $this->client->request($method, $uri, $options);
-            } catch (ConnectException $e) {
-                $response = null;
-                $error = $e->getMessage();
-            } catch (ErrorException $e) {
-                $response = null;
-                $error = $e->getMessage();
-                if (!str_contains('cURL error', $error)) {
-                    throw $e;
-                }
-            }
-            $time = round((microtime(true) - $time) * 1000, 2);
-
-            if (!$response) {
-                continue;
-            }
-
-            $status = $response->getStatusCode();
-            if ($status == 429 || $status >= 502) {
-                $error = "HTTP error $status";
-                continue;
-            }
-
-            $headers = $response->getHeaders();
-            $content = $response->getBody()->getContents();
-            if (str_contains(array_get($headers, 'Content-Type.0'), 'application/json')) {
-                $content = json_parse($content);
-            }
-
-            Log::debug("HTTP $time ms", compact('status', 'headers', 'content'));
-
-            return [$content, $status, $headers];
-        }
-        throw new Exception($error);
+        $params_type = strtoupper($method) == 'POST' ? 'form_params' : 'query';
+        $response = $this->request($uri, $method, array_merge($this->options, $options, [
+            $params_type => $params,
+        ]));
+        return $response->getBody()->getContents();
     }
 
-    public function delay($time)
+    public function request($uri, $method = 'GET', $options = [])
     {
-        if ($time > 0) {
-            usleep($time * 1000000);
-        }
-    }
+        $options['http_errors'] = true;
 
-    public function rate($limit = 1, $key = '')
-    {
-        if ($limit > 0) {
-            $class = get_class($this);
-            $key = "http.last.time.$class.$key";
-            $interval = 1 / $limit + 0.001;
-            $now = microtime(true);
-            $last = Cache::get($key, 0);
-            $passed = $now - $last;
-            $wait = $interval - $passed;
-            if ($wait < 0) {
-                $wait = 0;
-            }
-            $remember = $interval + $wait;
-            Cache::put($key, $now + $wait, ceil($remember / 60));
-            $this->delay($wait);
+        $times = $this->options['retry_times'];
+        $request = new Request($method, $uri);
+
+        beginning:
+
+        $exception = null;
+
+        if ($options['rate_limit'] > 0) {
+            rate_limit($options['rate_key'], $options['rate_limit']);
         }
+
+        try {
+            $response = $this->client->send($request, $options);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            $exception = $e;
+        }
+
+        $status = $response->getStatusCode();
+        $body = $response->getBody();
+
+        if ($exception instanceof ClientException && $status != 429) {
+            $exception = null;
+        }
+
+        if (!$this->options['allow_empty'] && !$body->getContents()) {
+            $exception = new BadResponseException('Empty response content', $request, $response);
+        }
+
+        if ($exception) {
+            $times--;
+            if ($times) {
+                microsleep($this->options['retry_sleep']);
+                goto beginning;
+            } else {
+                throw $exception;
+            }
+        }
+
+        return $response;
     }
 
 }

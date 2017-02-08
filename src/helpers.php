@@ -24,6 +24,6 @@ if (!function_exists('http_post')) {
 if (!function_exists('http_code_message')) {
     function http_code_message($code)
     {
-        return \Febalist\LaravelHttp\Http::code_message($code);
+        return http()->code_message($code);
     }
 }
