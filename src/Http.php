@@ -3,7 +3,6 @@
 namespace Febalist\LaravelHttp;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
@@ -75,7 +74,6 @@ class Http
         'rate_key'    => null,
         'retry_times' => 1,
         'retry_sleep' => 0,
-        'allow_empty' => false,
     ];
 
     public function __construct($options = [])
@@ -132,14 +130,9 @@ class Http
         }
 
         $status = $response->getStatusCode();
-        $body = $response->getBody();
 
         if ($exception instanceof ClientException && $status != 429) {
             $exception = null;
-        }
-
-        if (!$exception && !$this->options['allow_empty'] && !$body->getContents()) {
-            $exception = new BadResponseException('Empty response content', $request, $response);
         }
 
         if ($exception) {
