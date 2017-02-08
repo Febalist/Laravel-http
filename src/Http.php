@@ -103,14 +103,21 @@ class Http
         $response = $this->request($uri, $method, array_merge($this->options, $options, [
             $params_type => $params,
         ]));
+        $content = $response->getBody()->getContents();
 
-        return $response->getBody()->getContents();
+        $content_type = $response->getHeader('Content-Type');
+        if (str_contains(array_first($content_type), 'application/json')) {
+            $content = json_parse($content);
+        }
+
+        return $content;
     }
 
     public function request($uri, $method = 'GET', $options = [])
     {
-        $options['http_errors'] = true;
-
+        $options = array_merge($this->options, $options, [
+            'http_errors' => true,
+        ]);
         $times = $this->options['retry_times'];
         $request = new Request($method, $uri);
 
