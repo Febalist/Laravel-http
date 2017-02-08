@@ -138,7 +138,7 @@ class Http
             $exception = null;
         }
 
-        if (!$this->options['allow_empty'] && !$body->getContents()) {
+        if (!$exception && !$this->options['allow_empty'] && !$body->getContents()) {
             $exception = new BadResponseException('Empty response content', $request, $response);
         }
 
