@@ -105,6 +105,7 @@ class Http
         $response = $this->request($uri, $method, array_merge($this->options, $options, [
             $params_type => $params,
         ]));
+
         return $response->getBody()->getContents();
     }
 
@@ -153,5 +154,4 @@ class Http
 
         return $response;
     }
-
 }
