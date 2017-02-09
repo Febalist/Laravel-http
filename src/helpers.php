@@ -1,9 +1,9 @@
 <?php
 
 if (!function_exists('http')) {
-    function http($options = [])
+    function http()
     {
-        return new Febalist\LaravelHttp\Http($options);
+        return resolve(Febalist\LaravelHttp\HttpServiceProvider::$abstract);
     }
 }
 
