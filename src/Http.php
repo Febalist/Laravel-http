@@ -116,7 +116,6 @@ class Http
 
     public function request($uri, $method = 'GET', $options = [])
     {
-
         $options = array_merge($this->options, $options);
         $times = $options['retry_times'];
 
