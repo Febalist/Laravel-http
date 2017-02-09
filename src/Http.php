@@ -74,6 +74,7 @@ class Http
         'rate_key'    => null,
         'retry_times' => 1,
         'retry_sleep' => 0,
+        'http_errors' => true,
     ];
 
     public function __construct($options = [])
@@ -100,7 +101,7 @@ class Http
     public function load($uri, $params = [], $method = 'GET', $options = [])
     {
         $params_type = strtoupper($method) == 'POST' ? 'form_params' : 'query';
-        $response = $this->request($uri, $method, array_merge($this->options, $options, [
+        $response = $this->request($uri, $method, array_merge($options, [
             $params_type => $params,
         ]));
         $content = $response->getBody()->getContents();
@@ -115,16 +116,17 @@ class Http
 
     public function request($uri, $method = 'GET', $options = [])
     {
-        $options = array_merge($this->options, $options, [
-            'http_errors' => true,
-        ]);
+
+        $options = array_merge($this->options, $options);
+        $times = $options['retry_times'];
+
         if (config('http.runscope.enabled') && $runscope_key = config('http.runscope.key')) {
             $uri = parse_url($uri);
             $domain = str_replace(['-', '.'], ['--', '-'], $uri['host']);
             $uri['host'] = "$domain-$runscope_key.runscope.net";
             $uri = unparse_url($uri);
         }
-        $times = $this->options['retry_times'];
+
         $request = new Request($method, $uri);
 
         beginning:
@@ -136,7 +138,9 @@ class Http
         }
 
         try {
-            $response = $this->client->send($request, $options);
+            $response = $this->client->send($request, array_merge($options, [
+                'http_errors' => true,
+            ]));
         } catch (RequestException $e) {
             $response = $e->getResponse();
             $exception = $e;
@@ -144,14 +148,17 @@ class Http
 
         $status = $response ? $response->getStatusCode() : 0;
 
-        if ($response && $exception instanceof ClientException && $status != 429) {
+        if ($exception instanceof ClientException && $status != 429) {
+            if ($options['http_errors']) {
+                throw $exception;
+            }
             $exception = null;
         }
 
         if ($exception) {
             $times--;
             if ($times) {
-                microsleep($this->options['retry_sleep']);
+                microsleep($options['retry_sleep']);
                 goto beginning;
             } else {
                 throw $exception;
