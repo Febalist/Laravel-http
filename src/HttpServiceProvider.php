@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 
 class HttpServiceProvider extends ServiceProvider
 {
+    public static $abstract = 'http';
+
     /**
      * Bootstrap the application events.
      *
@@ -16,6 +18,9 @@ class HttpServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/config.php' => config_path('http.php'),
         ]);
+        $this->app->singleton(static::$abstract, function ($app) {
+            return new Http();
+        });
     }
 
     /**
