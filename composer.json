@@ -9,8 +9,8 @@
         ]
     },
     "require": {
-        "laravel/framework": "5.4.*",
-        "febalist/laravel-support": "^2.1",
+        "illuminate/support": "5.4.*",
+        "febalist/laravel-support": "^2.2",
         "guzzlehttp/guzzle": "~6.0"
     }
 }

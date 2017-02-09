@@ -118,6 +118,12 @@ class Http
         $options = array_merge($this->options, $options, [
             'http_errors' => true,
         ]);
+        if (config('http.runscope.enabled') && $runscope_key = config('http.runscope.key')) {
+            $uri = parse_url($uri);
+            $domain = str_replace(['-', '.'], ['--', '-'], $uri['host']);
+            $uri['host'] = "$domain-$runscope_key.runscope.net";
+            $uri = unparse_url($uri);
+        }
         $times = $this->options['retry_times'];
         $request = new Request($method, $uri);
 
