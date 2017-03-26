@@ -1,5 +1,7 @@
 # Laravel HTTP
 
+    composer require febalist/laravel-http
+
 Providers:
 
         Febalist\LaravelHttp\HttpServiceProvider::class,
