@@ -13,9 +13,9 @@ class Response
         $this->response = $response;
     }
 
-    function body()
+    public function body()
     {
-        return (string)$this->response->getBody();
+        return (string) $this->response->getBody();
     }
 
     public function json()
@@ -23,53 +23,53 @@ class Response
         try {
             return json_decode($this->body(), true);
         } catch (\Exception $exception) {
-            return null;
+            return;
         }
     }
 
-    function header($header)
+    public function header($header)
     {
         return $this->response->getHeaderLine($header);
     }
 
-    function headers()
+    public function headers()
     {
         return collect($this->response->getHeaders())->mapWithKeys(function ($v, $k) {
             return [$k => $v[0]];
         })->all();
     }
 
-    function status()
+    public function status()
     {
         return $this->response->getStatusCode();
     }
 
-    function isSuccess()
+    public function isSuccess()
     {
         return $this->status() >= 200 && $this->status() < 300;
     }
 
-    function isOk()
+    public function isOk()
     {
         return $this->isSuccess();
     }
 
-    function isRedirect()
+    public function isRedirect()
     {
         return $this->status() >= 300 && $this->status() < 400;
     }
 
-    function isClientError()
+    public function isClientError()
     {
         return $this->status() >= 400 && $this->status() < 500;
     }
 
-    function isServerError()
+    public function isServerError()
     {
         return $this->status() >= 500;
     }
 
-    function __toString()
+    public function __toString()
     {
         return $this->body();
     }

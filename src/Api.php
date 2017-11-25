@@ -8,7 +8,6 @@ abstract class Api
 
     public function __construct()
     {
-
     }
 
     public function throttler($id, $limit = 1, $timeout = null)
@@ -28,6 +27,7 @@ abstract class Api
         $this->throttle();
         $request = new Request($url, $options);
         $request->headers($headers);
+
         return $request->send($method, $params);
     }
 }

@@ -36,12 +36,12 @@ if (!function_exists('runscope')) {
         $host = str_replace(
             '~',
             '--',
-            sprintf("%s-%s.%s", $host, $config['bucket'], $config['gatetway'])
+            sprintf('%s-%s.%s', $host, $config['bucket'], $config['gatetway'])
         );
 
         if (isset($parts['user']) || isset($parts['pass'])) {
             $host = sprintf(
-                "%s:%s@%s",
+                '%s:%s@%s',
                 $parts['user'],
                 $parts['pass'],
                 $host
