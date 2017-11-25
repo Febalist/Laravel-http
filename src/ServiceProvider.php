@@ -2,9 +2,9 @@
 
 namespace Febalist\LaravelHttp;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
-class HttpServiceProvider extends ServiceProvider
+class ServiceProvider extends IlluminateServiceProvider
 {
     public static $abstract = 'http';
 
@@ -16,11 +16,8 @@ class HttpServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/config.php' => config_path('http.php'),
+            __DIR__.'/config/http.php' => config_path('http.php'),
         ]);
-        $this->app->singleton(static::$abstract, function ($app) {
-            return new Http();
-        });
     }
 
     /**
@@ -30,5 +27,8 @@ class HttpServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(
+            __DIR__.'/config/http.php', 'http'
+        );
     }
 }

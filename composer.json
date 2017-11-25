@@ -1,16 +1,23 @@
 {
-    "name": "febalist/laravel-http",
-    "autoload": {
-        "psr-4": {
-            "Febalist\\LaravelHttp\\": "src/"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+  "name": "febalist/laravel-http",
+  "require": {
+    "bandwidth-throttle/token-bucket": "^2.0",
+    "illuminate/support": "5.5.*",
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Febalist\\LaravelHttp\\": "src/"
     },
-    "require": {
-        "illuminate/support": "5.4.*",
-        "febalist/laravel-support": "^2.2",
-        "guzzlehttp/guzzle": "~6.0"
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Febalist\\LaravelHttp\\ServiceProvider"
+      ]
     }
+  }
 }
