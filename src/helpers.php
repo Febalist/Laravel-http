@@ -16,6 +16,21 @@ if (!function_exists('http_get')) {
     }
 }
 
+if (!function_exists('throttler')) {
+    /** @return \Febalist\LaravelHttp\Throttler */
+    function throttler($id, $limit = 1, $timeout = null)
+    {
+        return new \Febalist\LaravelHttp\Throttler($id, $limit, $timeout);
+    }
+}
+
+if (!function_exists('throttle')) {
+    function throttle($id, $limit = 1, $timeout = null)
+    {
+        throttler($id, $limit, $timeout)->throttle();
+    }
+}
+
 if (!function_exists('http_post')) {
     /** @return \Febalist\LaravelHttp\Response */
     function http_post($url, $body = [], $options = [])
