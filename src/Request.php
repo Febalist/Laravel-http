@@ -96,7 +96,7 @@ class Request
             if (isset($parts['path']) && ($flags & self::HTTP_URL_JOIN_PATH)) {
                 if (isset($parse_url['path'])) {
                     $parse_url['path'] = rtrim(str_replace(basename($parse_url['path']), '', $parse_url['path']),
-                            '/') . '/' . ltrim($parts['path'], '/');
+                            '/').'/'.ltrim($parts['path'], '/');
                 } else {
                     $parse_url['path'] = $parts['path'];
                 }
@@ -104,7 +104,7 @@ class Request
             // Join the original query string with the new query string
             if (isset($parts['query']) && ($flags & self::HTTP_URL_JOIN_QUERY)) {
                 if (isset($parse_url['query'])) {
-                    $parse_url['query'] .= '&' . $parts['query'];
+                    $parse_url['query'] .= '&'.$parts['query'];
                 } else {
                     $parse_url['query'] = $parts['query'];
                 }
@@ -119,13 +119,13 @@ class Request
         }
         $new_url = $parse_url;
 
-        return ((isset($parse_url['scheme'])) ? $parse_url['scheme'] . '://' : '')
-            . ((isset($parse_url['user'])) ? $parse_url['user'] . ((isset($parse_url['pass'])) ? ':' . $parse_url['pass'] : '') . '@' : '')
-            . ((isset($parse_url['host'])) ? $parse_url['host'] : '')
-            . ((isset($parse_url['port'])) ? ':' . $parse_url['port'] : '')
-            . ((isset($parse_url['path'])) ? $parse_url['path'] : '')
-            . ((isset($parse_url['query'])) ? '?' . $parse_url['query'] : '')
-            . ((isset($parse_url['fragment'])) ? '#' . $parse_url['fragment'] : '');
+        return ((isset($parse_url['scheme'])) ? $parse_url['scheme'].'://' : '')
+            .((isset($parse_url['user'])) ? $parse_url['user'].((isset($parse_url['pass'])) ? ':'.$parse_url['pass'] : '').'@' : '')
+            .((isset($parse_url['host'])) ? $parse_url['host'] : '')
+            .((isset($parse_url['port'])) ? ':'.$parse_url['port'] : '')
+            .((isset($parse_url['path'])) ? $parse_url['path'] : '')
+            .((isset($parse_url['query'])) ? '?'.$parse_url['query'] : '')
+            .((isset($parse_url['fragment'])) ? '#'.$parse_url['fragment'] : '');
     }
 
     protected static function getIntegerConstantForPart($key)
