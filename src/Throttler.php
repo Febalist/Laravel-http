@@ -27,19 +27,26 @@ class Throttler
         $this->consume(true);
     }
 
-    protected function storage($id, $limit)
+    protected function storage($id, $minutes)
     {
-        $id = str_slug($id, '_');
-        if (config('cache.default') == 'redis') {
+        $name = 'throttle.'.str_slug($id, '_');
+
+        $store = config('cache.default');
+        $driver = config("cache.stores.$store.driver");
+        $client = config('database.redis.client');
+
+        if ($driver == 'redis' && $client == 'predis') {
+            $connection = config('cache.stores.redis.connection');
+            $parameters = config("database.redis.$connection");
             $prefix = config('cache.prefix');
 
             return new PredisStorage(
-                "$prefix.throttle.$id",
-                new \Predis\Client()
+                "$prefix.$name",
+                new \Predis\Client($parameters)
             );
         }
 
-        return new CacheStorage($id, $limit);
+        return new CacheStorage($name, $minutes);
     }
 
     protected function consume($first)

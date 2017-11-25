@@ -10,13 +10,13 @@ use malkusch\lock\mutex\NoMutex;
 final class CacheStorage implements Storage, GlobalScope
 {
     protected $mutex;
-    protected $id;
+    protected $name;
     protected $minutes;
 
-    public function __construct($id, $minutes)
+    public function __construct($name, $minutes)
     {
         $this->mutex = new NoMutex();
-        $this->id = $id;
+        $this->name = $name;
         $this->minutes = $minutes;
     }
 
@@ -32,17 +32,17 @@ final class CacheStorage implements Storage, GlobalScope
 
     public function remove()
     {
-        Cache::forget($this->getKey());
+        Cache::forget($this->name);
     }
 
     public function setMicrotime($microtime)
     {
-        Cache::put($this->getKey(), $microtime, $this->minutes);
+        Cache::put($this->name, $microtime, $this->minutes);
     }
 
     public function getMicrotime()
     {
-        return Cache::get($this->getKey());
+        return Cache::get($this->name);
     }
 
     public function getMutex()
@@ -52,10 +52,5 @@ final class CacheStorage implements Storage, GlobalScope
 
     public function letMicrotimeUnchanged()
     {
-    }
-
-    protected function getKey()
-    {
-        return "throttle.$this->id";
     }
 }
