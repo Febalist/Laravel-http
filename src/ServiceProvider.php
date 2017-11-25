@@ -16,7 +16,7 @@ class ServiceProvider extends IlluminateServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/config/http.php' => config_path('http.php'),
+            __DIR__.'/../config/http.php' => config_path('http.php'),
         ]);
     }
 
@@ -28,7 +28,7 @@ class ServiceProvider extends IlluminateServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/config/http.php',
+            __DIR__.'/../config/http.php',
             'http'
         );
     }
