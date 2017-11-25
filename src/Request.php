@@ -168,6 +168,7 @@ class Request
         return $this;
     }
 
+    /** @return Response */
     public function send($method, $params = null)
     {
         $method = strtoupper($method);
@@ -182,6 +183,7 @@ class Request
         return new Response($response);
     }
 
+    /** @return Response */
     public function get($query = null)
     {
         if ($query) {
@@ -191,6 +193,7 @@ class Request
         return $this->send('GET');
     }
 
+    /** @return Response */
     public function post($body = null)
     {
         if ($body) {
@@ -200,6 +203,7 @@ class Request
         return $this->send('POST');
     }
 
+    /** @return self */
     public function form($data)
     {
         $this->form_params($data);
@@ -207,6 +211,7 @@ class Request
         return $this;
     }
 
+    /** @return self */
     public function redirects($follow)
     {
         if ($follow === false || is_array($follow)) {
@@ -216,6 +221,7 @@ class Request
         return $this;
     }
 
+    /** @return self */
     public function auth_basic($username, $password = null)
     {
         $this->auth([$username, $password]);
@@ -223,6 +229,7 @@ class Request
         return $this;
     }
 
+    /** @return self */
     public function auth_digest($username, $password = null)
     {
         $this->auth([$username, $password, 'digest']);
