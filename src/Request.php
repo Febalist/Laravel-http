@@ -37,7 +37,7 @@ class Request
     }
 
     /**
-     * Build an URL
+     * Build an URL.
      *
      * The parts of the second URL will be merged into the first according to the
      * flags argument.
@@ -117,6 +117,7 @@ class Request
             }
         }
         $new_url = $parse_url;
+
         return ((isset($parse_url['scheme'])) ? $parse_url['scheme'].'://' : '')
             .((isset($parse_url['user'])) ? $parse_url['user'].((isset($parse_url['pass'])) ? ':'.$parse_url['pass'] : '').'@' : '')
             .((isset($parse_url['host'])) ? $parse_url['host'] : '')
@@ -155,12 +156,14 @@ class Request
                 $result = self::HTTP_URL_STRIP_USER;
                 break;
         }
-        return (int)$result;
+
+        return (int) $result;
     }
 
     public function __call($name, $arguments)
     {
         $this->options[$name] = $arguments[0];
+
         return $this;
     }
 
@@ -174,6 +177,7 @@ class Request
         }
         $client = new Client();
         $response = $client->request($method, $this->url, $this->options);
+
         return new Response($response);
     }
 
@@ -182,6 +186,7 @@ class Request
         if ($query) {
             $this->query($query);
         }
+
         return $this->send('GET');
     }
 
@@ -190,12 +195,14 @@ class Request
         if ($body) {
             $this->body($body);
         }
+
         return $this->send('POST');
     }
 
     public function form($data)
     {
         $this->form_params($data);
+
         return $this;
     }
 
@@ -204,18 +211,21 @@ class Request
         if ($follow === false || is_array($follow)) {
             $this->allow_redirects($follow);
         }
+
         return $this;
     }
 
     public function auth_basic($username, $password = null)
     {
         $this->auth([$username, $password]);
+
         return $this;
     }
 
     public function auth_digest($username, $password = null)
     {
         $this->auth([$username, $password, 'digest']);
+
         return $this;
     }
 }
