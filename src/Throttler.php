@@ -15,18 +15,29 @@ class Throttler
 
     public function __construct($id, $limit = 1, $timeout = null)
     {
-        $prefix = config('cache.prefix');
-        $id = str_slug($id, '_');
-        $client = new \Predis\Client();
-        $storage = new PredisStorage("$prefix.api_throttle.$id", $client);
-        $rate = new Rate($limit, Rate::SECOND);
-        $this->bucket = new TokenBucket(1, $rate, $storage);
+        $this->bucket = new TokenBucket(1,
+            new Rate($limit, Rate::SECOND),
+            $this->storage($id, ceil($limit / 60))
+        );
         $this->consumer = new BlockingConsumer($this->bucket);
     }
 
     public function throttle()
     {
         $this->consume(true);
+    }
+
+    protected function storage($id, $limit)
+    {
+        $id = str_slug($id, '_');
+        if (config('cache.default') == 'redis') {
+            $prefix = config('cache.prefix');
+            return new PredisStorage(
+                "$prefix.throttle.$id",
+                new \Predis\Client()
+            );
+        }
+        return new CacheStorage($id, $limit);
     }
 
     protected function consume($first)
