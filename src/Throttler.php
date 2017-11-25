@@ -32,11 +32,13 @@ class Throttler
         $id = str_slug($id, '_');
         if (config('cache.default') == 'redis') {
             $prefix = config('cache.prefix');
+
             return new PredisStorage(
                 "$prefix.throttle.$id",
                 new \Predis\Client()
             );
         }
+
         return new CacheStorage($id, $limit);
     }
 
