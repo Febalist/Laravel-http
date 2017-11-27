@@ -39,6 +39,27 @@ class Response
         })->all();
     }
 
+    public function cookies()
+    {
+        $parts = explode(';, ', $this->header('Set-Cookie'));
+        $cookies = [];
+
+        foreach ($parts as $part) {
+            $cookie = explode('; ', $part)[0];
+            $cookie = explode('=', $cookie);
+            $key = urldecode($cookie[0]);
+            $value = urldecode($cookie[1]);
+            $cookies[$key] = $value;
+        }
+
+        return $cookies;
+    }
+
+    public function cookie($key)
+    {
+        return array_get($this->cookies(), $key);
+    }
+
     public function status()
     {
         return $this->response->getStatusCode();
