@@ -42,40 +42,6 @@ if (!function_exists('http_post')) {
 if (!function_exists('runscope')) {
     function runscope($url)
     {
-        $debug = config('app.debug', false);
-        $config = config('http.runscope', []);
-
-        if ($config['enabled'] === false || ($config['enabled'] === null && !$debug)) {
-            return $url;
-        }
-
-        $parts = parse_url($url);
-        $host = str_replace(['-', '.'], ['~', '-'], $parts['host']);
-        $host = str_replace(
-            '~',
-            '--',
-            sprintf('%s-%s.%s', $host, $config['bucket'], $config['gatetway'])
-        );
-
-        if (isset($parts['user']) || isset($parts['pass'])) {
-            $host = sprintf(
-                '%s:%s@%s',
-                $parts['user'],
-                $parts['pass'],
-                $host
-            );
-        }
-
-        $url = \Febalist\LaravelHttp\Request::http_build_url(null,
-            [
-                'scheme'   => $parts['scheme'],
-                'host'     => $host,
-                'path'     => isset($parts['path']) ? $parts['path'] : '/',
-                'query'    => isset($parts['query']) ? $parts['query'] : null,
-                'fragment' => isset($parts['fragment']) ? $parts['fragment'] : null,
-                'port'     => isset($parts['port']) ? $parts['port'] : null,
-            ]);
-
-        return $url;
+        return \Febalist\LaravelHttp\Request::runscope($url);
     }
 }
