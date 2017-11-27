@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 
 /**
  * @method self query($data)
- * @method self body($data)
  * @method self json($data)
  * @method self headers($data)
  * @method self timeout($seconds)
@@ -55,7 +54,7 @@ class Request
         if ($params && $method == 'GET') {
             $this->query($params);
         } elseif ($params) {
-            $this->body($params);
+            $this->form($params);
         }
         $client = new Client();
         $response = $client->request($method, static::runscope($this->url), $this->options);
@@ -74,10 +73,10 @@ class Request
     }
 
     /** @return Response */
-    public function post($body = null)
+    public function post($form = null)
     {
-        if ($body) {
-            $this->body($body);
+        if ($form) {
+            $this->form($form);
         }
 
         return $this->send('POST');
