@@ -30,4 +30,14 @@ abstract class Api
 
         return $request->send($method, $params);
     }
+
+    protected function get($url, $params = [], $headers = [], $options = [])
+    {
+        return $this->request('get', $url, $headers, $options);
+    }
+
+    protected function post($url, $params = [], $headers = [], $options = [])
+    {
+        return $this->request('post', $url, $headers, $options);
+    }
 }
