@@ -178,7 +178,7 @@ class Request
             $this->body($params);
         }
         $client = new Client();
-        $response = $client->request($method, $this->url, $this->options);
+        $response = $client->request($method, runscope($this->url), $this->options);
 
         return new Response($response);
     }
