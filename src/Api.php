@@ -10,16 +10,16 @@ abstract class Api
     {
     }
 
-    public function throttler($id, $limit = 1, $timeout = null)
-    {
-        $this->throttler = new Throttler($id, $limit, $timeout);
-    }
-
     public function throttle()
     {
         if ($this->throttler) {
             $this->throttler->throttle();
         }
+    }
+
+    protected function throttler_setup($id, $limit = 1, $timeout = null)
+    {
+        $this->throttler = new Throttler($id, $limit, $timeout);
     }
 
     protected function request($method, $url, $params = [], $headers = [], $options = [])
