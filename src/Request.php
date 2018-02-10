@@ -28,7 +28,7 @@ class Request
         $debug = config('app.debug', false);
         $config = config('http.runscope', []);
 
-        if ($config['enabled'] === false || ($config['enabled'] === null && !$debug)) {
+        if (!$config['bucket'] || $config['enabled'] === false || ($config['enabled'] === null && !$debug)) {
             return $url;
         }
 
