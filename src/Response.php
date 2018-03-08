@@ -54,9 +54,18 @@ class Response
         return $cookies;
     }
 
-    public function cookie($key)
+    public function cookie($key = null)
     {
-        return array_get($this->cookies(), $key);
+        if ($key) {
+            return array_get($this->cookies(), $key);
+        }
+
+        $cookies = [];
+        foreach ($this->cookies() as $key => $value) {
+            $cookies[] = urlencode($key).'='.urlencode($value);
+        }
+
+        return implode('; ', $cookies);
     }
 
     public function status()
