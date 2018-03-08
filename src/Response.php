@@ -27,9 +27,9 @@ class Response
         }
     }
 
-    public function header($header)
+    public function header($header, $array = false)
     {
-        return $this->response->getHeaderLine($header);
+        return $array ? $this->response->getHeader($header) : $this->response->getHeaderLine($header);
     }
 
     public function headers()
@@ -41,10 +41,9 @@ class Response
 
     public function cookies()
     {
-        $parts = explode(';, ', $this->header('Set-Cookie'));
         $cookies = [];
 
-        foreach ($parts as $part) {
+        foreach ($this->header('Set-Cookie', true) as $part) {
             $cookie = explode('; ', $part)[0];
             $cookie = explode('=', $cookie);
             $key = urldecode($cookie[0]);
