@@ -22,6 +22,7 @@ class Response
     {
         try {
             $array = json_decode($this->body(), true);
+
             return array_get($array, $key);
         } catch (\Exception $exception) {
             return;
