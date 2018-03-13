@@ -18,11 +18,11 @@ class Response
         return (string) $this->response->getBody();
     }
 
-    public function json($key = null)
+    public function json($key = null, $default = null)
     {
         try {
             $array = json_decode($this->body(), true);
-            return array_get($array, $key);
+            return array_get($array, $key, $default);
         } catch (\Exception $exception) {
             return;
         }
