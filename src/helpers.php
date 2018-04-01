@@ -45,3 +45,19 @@ if (!function_exists('runscope')) {
         return \Febalist\LaravelHttp\Request::runscope($url);
     }
 }
+
+if (!function_exists('str_limit_hard')) {
+    function str_limit_hard($value, $limit = 100, $end = '...')
+    {
+        if (mb_strwidth($value, 'UTF-8') <= $limit) {
+            return $value;
+        }
+
+        $limit -= mb_strwidth($end, 'UTF-8');
+        if ($limit < 0) {
+            return '';
+        }
+
+        return str_limit($value, $limit, $end);
+    }
+}
