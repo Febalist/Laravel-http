@@ -4,27 +4,29 @@ namespace Febalist\LaravelHttp;
 
 abstract class Api
 {
-    protected $throttler;
+    protected $default_throttler;
 
     public function __construct()
     {
+
     }
 
-    public function throttle()
+    protected function throttle($id, $limit, $timeout = null)
     {
-        if ($this->throttler) {
-            $this->throttler->throttle();
-        }
+        $throttler = new Throttler(...func_get_args());
+        $throttler->throttle();
     }
 
-    protected function throttler_setup($id, $limit = 1, $timeout = null)
+    protected function throttler_setup($id, $limit, $timeout = null)
     {
-        $this->throttler = new Throttler($id, $limit, $timeout);
+        $this->default_throttle = func_get_args();
     }
 
     protected function request($method, $url, $params = [], $headers = [], $options = [])
     {
-        $this->throttle();
+        if ($this->default_throttle) {
+            $this->throttle(...$this->default_throttle);
+        }
         $request = new Request($url, $options);
         $request->headers($headers);
 
