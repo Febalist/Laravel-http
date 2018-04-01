@@ -20,14 +20,14 @@ if (!function_exists('throttler')) {
     /** @return \Febalist\LaravelHttp\Throttler */
     function throttler($id, $limit = 1, $timeout = null)
     {
-        return new \Febalist\LaravelHttp\Throttler(...func_get_args());
+        return new \Febalist\LaravelHttp\Throttler($id, $limit, $timeout);
     }
 }
 
 if (!function_exists('throttle')) {
     function throttle($id, $limit = 1, $timeout = null)
     {
-        throttler(...func_get_args())->throttle();
+        throttler($id, $limit, $timeout)->throttle();
     }
 }
 
