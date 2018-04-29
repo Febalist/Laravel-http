@@ -1,15 +1,15 @@
 <?php
 
 if (!function_exists('http')) {
-    /** @return \Febalist\LaravelHttp\Request */
+    /** @return \Febalist\Laravel\Http\Request */
     function http($url, $options = [])
     {
-        return new \Febalist\LaravelHttp\Request($url, $options);
+        return new \Febalist\Laravel\Http\Request($url, $options);
     }
 }
 
 if (!function_exists('http_get')) {
-    /** @return \Febalist\LaravelHttp\Response */
+    /** @return \Febalist\Laravel\Http\Response */
     function http_get($url, $query = [], $options = [])
     {
         return http($url, $options)->get($query);
@@ -17,10 +17,10 @@ if (!function_exists('http_get')) {
 }
 
 if (!function_exists('throttler')) {
-    /** @return \Febalist\LaravelHttp\Throttler */
+    /** @return \Febalist\Laravel\Http\Throttler */
     function throttler($id, $limit = 1, $timeout = null)
     {
-        return new \Febalist\LaravelHttp\Throttler($id, $limit, $timeout);
+        return new \Febalist\Laravel\Http\Throttler($id, $limit, $timeout);
     }
 }
 
@@ -32,7 +32,7 @@ if (!function_exists('throttle')) {
 }
 
 if (!function_exists('http_post')) {
-    /** @return \Febalist\LaravelHttp\Response */
+    /** @return \Febalist\Laravel\Http\Response */
     function http_post($url, $body = [], $options = [])
     {
         return http($url, $options)->post($body);

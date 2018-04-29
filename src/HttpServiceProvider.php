@@ -1,10 +1,10 @@
 <?php
 
-namespace Febalist\LaravelHttp;
+namespace Febalist\Laravel\Http;
 
-use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class ServiceProvider extends IlluminateServiceProvider
+class HttpServiceProvider extends ServiceProvider
 {
     public static $abstract = 'http';
 
@@ -27,9 +27,8 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/http.php',
-            'http'
-        );
+        $this->mergeConfigFrom(__DIR__.'/../config/http.php', 'http');
+
+        require_once __DIR__.'/helpers.php';
     }
 }

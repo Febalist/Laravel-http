@@ -1,6 +1,6 @@
 <?php
 
-namespace Febalist\LaravelHttp;
+namespace Febalist\Laravel\Http;
 
 use bandwidthThrottle\tokenBucket\BlockingConsumer;
 use bandwidthThrottle\tokenBucket\Rate;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Febalist\LaravelHttp;
+namespace Febalist\Laravel\Http;
 
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
