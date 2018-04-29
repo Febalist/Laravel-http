@@ -23,23 +23,6 @@ class Request
             ];
     }
 
-    public static function runscope($url)
-    {
-        $debug = config('app.debug', false);
-        $config = config('http.runscope', []);
-
-        if (!$config['bucket'] || $config['enabled'] === false || ($config['enabled'] === null && !$debug)) {
-            return $url;
-        }
-
-        $host_old = parse_url($url)['host'];
-        $host_new = str_replace(['-', '.'], ['~', '-'], $host_old);
-        $host_new = sprintf('%s-%s.%s', $host_new, $config['bucket'], $config['gateway']);
-        $host_new = str_replace('~', '--', $host_new);
-
-        return str_replace_first($host_old, $host_new, $url);
-    }
-
     public function __call($name, $arguments)
     {
         $this->options[$name] = $arguments[0];
@@ -57,7 +40,7 @@ class Request
             $this->form($params);
         }
         $client = new Client();
-        $response = $client->request($method, static::runscope($this->url), $this->options);
+        $response = $client->request($method, $this->url, $this->options);
 
         return new Response($response);
     }

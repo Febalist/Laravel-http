@@ -38,10 +38,3 @@ if (!function_exists('http_post')) {
         return http($url, $options)->post($body);
     }
 }
-
-if (!function_exists('runscope')) {
-    function runscope($url)
-    {
-        return \Febalist\LaravelHttp\Request::runscope($url);
-    }
-}
