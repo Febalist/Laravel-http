@@ -24,7 +24,7 @@ abstract class Api
 
     protected function request($method, $url, $params = [], $headers = [], $options = [])
     {
-        if ($this->default_throttle) {
+        if (isset($this->default_throttle)) {
             $this->throttle(...$this->default_throttle);
         }
         $request = new Request($url, $options);
