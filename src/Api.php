@@ -8,7 +8,6 @@ abstract class Api
 
     public function __construct()
     {
-
     }
 
     protected function throttle($id, $limit, $timeout = null)
