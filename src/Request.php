@@ -18,9 +18,10 @@ class Request
     public function __construct($url, $options = [])
     {
         $this->url = $url;
-        $this->options = $options + [
-                'http_errors' => false,
-            ];
+        $this->options = array_merge([
+            'http_errors' => false,
+            'verify' => !config('app.debug'),
+        ], $options);
     }
 
     public function __call($name, $arguments)
