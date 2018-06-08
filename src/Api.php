@@ -42,4 +42,11 @@ abstract class Api
     {
         return $this->request('post', $url, $params, $headers, $options);
     }
+
+    protected function request_post_json($url, $params = [], $headers = [], $options = [])
+    {
+        $options['json'] = $params;
+
+        return $this->request('post', $url, null, $headers, $options);
+    }
 }

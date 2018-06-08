@@ -16,6 +16,22 @@ if (!function_exists('http_get')) {
     }
 }
 
+if (!function_exists('http_post')) {
+    /** @return \Febalist\Laravel\Http\Response */
+    function http_post($url, $body = [], $options = [])
+    {
+        return http($url, $options)->post($body);
+    }
+}
+
+if (!function_exists('http_post')) {
+    /** @return \Febalist\Laravel\Http\Response */
+    function http_post_json($url, $data = [], $options = [])
+    {
+        return http($url, $options)->json($data)->post();
+    }
+}
+
 if (!function_exists('throttler')) {
     /** @return \Febalist\Laravel\Http\Throttler */
     function throttler($id, $limit = 1, $timeout = null)
@@ -28,13 +44,5 @@ if (!function_exists('throttle')) {
     function throttle($id, $limit = 1, $timeout = null)
     {
         throttler($id, $limit, $timeout)->throttle();
-    }
-}
-
-if (!function_exists('http_post')) {
-    /** @return \Febalist\Laravel\Http\Response */
-    function http_post($url, $body = [], $options = [])
-    {
-        return http($url, $options)->post($body);
     }
 }
