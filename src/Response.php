@@ -7,10 +7,12 @@ use GuzzleHttp\Psr7\Response as GuzzleResponse;
 class Response
 {
     protected $response;
+    protected $request;
 
-    public function __construct(GuzzleResponse $response)
+    public function __construct(GuzzleResponse $response, Request $request)
     {
         $this->response = $response;
+        $this->request = $request;
     }
 
     public function body()

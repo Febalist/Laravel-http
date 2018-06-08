@@ -43,7 +43,7 @@ class Request
         $client = new Client();
         $response = $client->request($method, $this->url, $this->options);
 
-        return new Response($response);
+        return new Response($response, $this);
     }
 
     /** @return Response */
