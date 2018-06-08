@@ -20,7 +20,7 @@ class Request
         $this->url = $url;
         $this->options = array_merge([
             'http_errors' => false,
-            'verify' => !config('app.debug'),
+            'verify'      => !config('app.debug'),
         ], $options);
     }
 
