@@ -26,7 +26,7 @@ class Request
 
     public function __call($name, $arguments)
     {
-        $this->options[$name] = $arguments[0];
+        $this->option($name, $arguments[0]);
 
         return $this;
     }
@@ -69,7 +69,7 @@ class Request
     /** @return self */
     public function form($data)
     {
-        $this->form_params($data);
+        $this->option('form_params', $data);
 
         return $this;
     }
@@ -78,7 +78,7 @@ class Request
     public function redirects($follow)
     {
         if ($follow === false || is_array($follow)) {
-            $this->allow_redirects($follow);
+            $this->option('allow_redirects', $follow);
         }
 
         return $this;
@@ -98,5 +98,10 @@ class Request
         $this->auth([$username, $password, 'digest']);
 
         return $this;
+    }
+
+    protected function option($key, $value)
+    {
+        $this->options[$key] = $value;
     }
 }
