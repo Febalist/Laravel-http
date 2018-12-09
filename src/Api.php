@@ -6,11 +6,6 @@ abstract class Api
 {
     protected $default_throttler;
 
-    public function __construct()
-    {
-
-    }
-
     protected function throttle($id, $limit, $timeout = null)
     {
         $throttler = new Throttler(...func_get_args());
